@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/beego/beego/v2/client/orm"
-	_ "github.com/go-sql-driver/mysql" // import your used driver
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Model Struct
@@ -12,17 +16,15 @@ type User struct {
 	Name string `orm:"size(100)"`
 }
 
-
 func init() {
 	// register model
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 
 	// set default database
-	orm.RegisterDataBase("default", "mysql", "root:pw@/yp?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "root:nikhilnn2@/yp?charset=utf8")
 
-	orm.RegisterModel(new(User))	
+	orm.RegisterModel(new(User))
 }
-
 
 func main() {
 
@@ -36,7 +38,7 @@ func main() {
 
 	// // insert
 	_, err := o.Insert(&user)
-	if err !=nil {
+	if err != nil {
 		fmt.Print(err)
 		fmt.Println("wron")
 	}
@@ -44,15 +46,20 @@ func main() {
 	// // update
 	user.Name = "astaxie"
 	_, err = o.Update(&user)
-	if err !=nil {
+	if err != nil {
 		fmt.Println("wron")
 	}
-
 
 	// // read one
 	u := User{Id: user.Id}
 	err = o.Read(&u)
 
+	r := gin.Default()
+	r.GET("", func(c *gin.Context) {
+		c.String(http.StatusOK, "hellooooo")
+	})
+	r.Run("localhost:8080")
+
 	// delete
-	//num, err = o.Delete(&u)	
+	//num, err = o.Delete(&u)
 }
